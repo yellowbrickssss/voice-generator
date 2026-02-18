@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>보이스 대사 제너레이터</title>
+<style>
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#0f1218;color:#e6e6e6;margin:0}
+header{padding:18px 20px;background:#171b24;border-bottom:1px solid #2a3140}
+main{padding:20px;max-width:1100px;margin:0 auto}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:220px;flex:1}
+label{font-size:13px;color:#aeb6c2}
+select,input[type="text"]{background:#151922;border:1px solid #2a3140;color:#e6e6e6;padding:8px 10px;border-radius:8px;outline:none}
+textarea{background:#0d1117;border:1px solid #2a3140;color:#e6e6e6;padding:10px;border-radius:8px;width:100%}
+button{background:#3b82f6;border:none;color:#fff;padding:10px 14px;border-radius:8px;font-weight:600;cursor:pointer}
+button.secondary{background:#374151}
+button:disabled{opacity:.6;cursor:not-allowed}
+.card{background:#12161d;border:1px solid #293040;border-radius:12px;padding:14px}
+.grid{overflow:auto;border:1px solid #293040;border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:600px}
+th,td{border-bottom:1px solid #293040;padding:8px 10px;text-align:left;font-size:14px}
+.actions{display:flex;gap:10px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px dashed #2a3140;padding:8px 10px;border-radius:8px}
+.muted{color:#9aa3af;font-size:13px}
+.kbd{background:#0d1117;border:1px solid #2a3140;border-bottom-width:3px;border-radius:6px;padding:2px 6px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:12px}
+.hint{margin-top:8px}
+code.block{display:block;white-space:pre;overflow:auto;background:#0d1117;border:1px solid #2a3140;border-radius:8px;padding:12px}
+</style>
+</head>
+<body>
+<header>
+  <div class="row" style="align-items:center;justify-content:space-between">
+    <div style="font-size:18px;font-weight:700">보이스 대사 제너레이터</div>
+    <div class="pill"><span class="muted">파일</span><strong>voice_genrator.html</strong></div>
+  </div>
+</header>
+<main>
+  <div class="card" style="margin-bottom:16px">
+    <div style="font-weight:700;margin-bottom:6px">LOH Voice Room Archive 코딩 설명서</div>
+    <div class="muted" style="white-space:pre-line;line-height:1.7;font-size:14px">
+      <div style="font-size:16px;font-weight:700;margin-bottom:8px">
+## 보이스 대사 제너레이터 (생성기) 사용 방법
+      </div>
+1. html 파일을 열고 영웅을 등록합니다. 아이디는 반드시 영어로 적어야 합니다.
+water / fire / earth (대지) / light / dark
+예시: earth_lucilica, dark_brandon
+
+2. 이미지 경로는 비워 둡니다. (룰로 정하기에는 복잡하니 추후 취합 시 제가 직접 정리하겠습니다.)
+
+      <div style="font-size:16px;font-weight:700;margin:12px 0 8px">
+## 반복 작업이 요구되는 구간: 음성 대사 추가
+      </div>
+1. 영웅 이름과 속성, 라벨을 입력합니다.
+
+2. 대사 텍스트를 입력합니다. (추천: Gemini 유료 구독자이시라면, Notebook LM에 음성 파일을 업로드 -> "파일명에 맞게 내용을 받아쓰기 해 줘" 라고 명령한 뒤 텍스트를 따 최소 수정만 하시면 편합니다.)
+
+3. 오디오 경로 역시 추후 수정하기 위해 비워두지만, '자동 생성' 체크박스는 반드시 해제해 주세요. (쓰지 않는 기능입니다.)
+
+4. 다음 파일을 들어가며 입력할 때마다 생성을 눌러 줍니다. 그러면 아래에 자동으로 붙어서 점점 길어집니다. 내용이 순서에 잘 맞는지 가늠할 수 있는 선에서 잘라가며 확인 작업을 겸하시기를 권합니다.
+
+5. 복사한 텍스트는 메모장에 붙여넣어 hyeya4847@gmail.com 으로 보내 주세요. (JS로 완성해서 보내실 필요가 전혀 없습니다. 어차피 취합을 해야 합니다.)
+영웅이름_속성js.txt 로 보내주시면 바로 js로 주셨구나, 하고 이해합니다.
+
+6. 끝까지 읽어주셔서 감사합니다. 그리고 참여를 결심해 주셔서도 감사합니다.
+    </div>
+  </div>
+  <div class="card">
+    <div style="font-weight:700;margin-bottom:6px">영웅 등록</div>
+    <div class="row">
+      <div class="field">
+        <label>아이디</label>
+        <input id="heroId" type="text" placeholder="예: earth_ondal">
+      </div>
+      <div class="field">
+        <label>이름</label>
+        <input id="heroName" type="text" placeholder="예: 루실리카">
+      </div>
+      <div class="field">
+        <label>속성</label>
+        <select id="heroElement">
+          <option value="water">water</option>
+          <option value="fire">fire</option>
+          <option value="earth">earth</option>
+          <option value="light">light</option>
+          <option value="dark">dark</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>이명</label>
+        <input id="heroTitle" type="text" placeholder="예: 고고한 감시자">
+      </div>
+      <div class="field">
+        <label>이미지경로</label>
+        <input id="heroImage" type="text" placeholder="예: assets/heroes/lucilicca_earth.png">
+      </div>
+    </div>
+    <div class="actions">
+      <button id="makeHeroBtn">영웅 JS 생성</button>
+      <button id="copyHeroBtn" class="secondary" disabled>복사</button>
+    </div>
+    <code id="heroJsOut" class="block"></code>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <div style="font-weight:700;margin-bottom:6px">음성 대사 추가</div>
+    <div class="row">
+      <div class="field">
+        <label>영웅이름</label>
+        <input id="voiceHeroName" type="text" placeholder="예: 루실리카">
+      </div>
+      <div class="field">
+        <label>속성</label>
+        <select id="voiceElement">
+          <option value="">선택 안 함</option>
+          <option value="water">water</option>
+          <option value="fire">fire</option>
+          <option value="earth">earth</option>
+          <option value="light">light</option>
+          <option value="dark">dark</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>라벨</label>
+        <input id="voiceLabel" type="text" placeholder="예: 02. 기본 인사">
+      </div>
+      <div class="field" style="flex:1 1 100%">
+        <label>대사텍스트</label>
+        <textarea id="voiceTranscript" rows="6" placeholder="여기에 바로 입력"></textarea>
+      </div>
+      <div class="field">
+        <label>오디오경로</label>
+        <input id="voiceAudio" type="text" placeholder="비워두면 자동 생성">
+        <div class="actions">
+          <input id="autoVoiceAudio" type="checkbox" checked>
+          <span class="muted">assets/voices/[영웅ID]/[자동ID].mp3</span>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="makeVoiceBtn">대사 JS 생성</button>
+      <button id="copyVoiceBtn" class="secondary" disabled>복사</button>
+    </div>
+    <code id="voiceJsOut" class="block"></code>
+    <div class="grid" style="margin-top:10px">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>id</th>
+            <th>label</th>
+            <th>audio</th>
+          </tr>
+        </thead>
+        <tbody id="previewBody"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+<script src="data.js"></script>
+<script>
+const heroId=document.getElementById("heroId");
+const heroName=document.getElementById("heroName");
+const heroElement=document.getElementById("heroElement");
+const heroTitle=document.getElementById("heroTitle");
+const heroImage=document.getElementById("heroImage");
+const makeHeroBtn=document.getElementById("makeHeroBtn");
+const copyHeroBtn=document.getElementById("copyHeroBtn");
+const heroJsOut=document.getElementById("heroJsOut");
+
+const voiceHeroName=document.getElementById("voiceHeroName");
+const voiceElement=document.getElementById("voiceElement");
+const voiceLabel=document.getElementById("voiceLabel");
+const voiceTranscript=document.getElementById("voiceTranscript");
+const voiceAudio=document.getElementById("voiceAudio");
+const autoVoiceAudio=document.getElementById("autoVoiceAudio");
+const makeVoiceBtn=document.getElementById("makeVoiceBtn");
+const copyVoiceBtn=document.getElementById("copyVoiceBtn");
+const voiceJsOut=document.getElementById("voiceJsOut");
+const previewBody=document.getElementById("previewBody");
+
+function heroList(){return Array.isArray(window.HERO_DATA)?window.HERO_DATA:[]}
+function findHeroByNameAndElement(name,element){
+  const list=heroList().filter(h=>(h.name||"").trim()===name.trim());
+  if(element) return list.find(h=>h.element===element)||null;
+  return list[0]||null
+}
+function autoVoiceId(){return "v_auto_"+Math.floor(Date.now()/1000)}
+function defaultVoiceAudio(heroId,voiceId){return "assets/voices/"+heroId+"/"+voiceId+".mp3"}
+
+function esc(s){return String(s).replace(/\\/g,"\\\\").replace(/\"/g,'\\"')}
+function makeHeroJs(){
+  const id=heroId.value.trim();
+  const name=heroName.value.trim();
+  const element=heroElement.value.trim();
+  const title=heroTitle.value.trim();
+  const image=heroImage.value.trim();
+  if(!id||!name||!element) return;
+  const block=[
+    "    {",
+    "        id: \""+esc(id)+"\",",
+    "        name: \""+esc(name)+"\",",
+    "        element: \""+esc(element)+"\",",
+    "        title: \""+esc(title)+"\",",
+    "        image: \""+esc(image)+"\",",
+    "        voices: [",
+    "        ]",
+    "    }"
+  ].join("\n");
+  heroJsOut.textContent=block;
+  copyHeroBtn.disabled=false
+}
+makeHeroBtn.addEventListener("click",makeHeroJs);
+copyHeroBtn.addEventListener("click",async()=>{
+  const txt=heroJsOut.textContent||"";
+  if(!txt) return;
+  try{await navigator.clipboard.writeText(txt)}catch(e){}
+});
+
+let voiceCount=0;
+let voiceBlocks=[];
+function addPreview(it){
+  const tr=document.createElement("tr");
+  const td0=document.createElement("td");td0.textContent=String(voiceCount);
+  const td1=document.createElement("td");td1.textContent=it.id;
+  const td2=document.createElement("td");td2.textContent=it.label;
+  const td3=document.createElement("td");td3.textContent=it.audio;
+  tr.appendChild(td0);tr.appendChild(td1);tr.appendChild(td2);tr.appendChild(td3);
+  previewBody.appendChild(tr)
+}
+function makeVoiceJs(){
+  const name=voiceHeroName.value.trim();
+  const element=voiceElement.value.trim();
+  const label=voiceLabel.value.trim();
+  const transcript=voiceTranscript.value.trim();
+  let audio=voiceAudio.value.trim();
+  const hero=findHeroByNameAndElement(name,element);
+  const vid=autoVoiceId();
+  if(!audio&&autoVoiceAudio.checked&&hero) audio=defaultVoiceAudio(hero.id,vid);
+  const block=[
+    "            {",
+    "                id: \""+esc(vid)+"\",",
+    "                label: \""+esc(label)+"\",",
+    "                transcript: \""+esc(transcript)+"\",",
+    "                audio: \""+esc(audio)+"\"",
+    "            }"
+  ].join("\n");
+  voiceBlocks.push(block);
+  voiceJsOut.textContent=voiceBlocks.join(",\n");
+  copyVoiceBtn.disabled=false;
+  voiceCount++;
+  addPreview({id:vid,label:label,audio:audio})
+}
+makeVoiceBtn.addEventListener("click",makeVoiceJs);
+copyVoiceBtn.addEventListener("click",async()=>{
+  const txt=voiceJsOut.textContent||"";
+  if(!txt) return;
+  try{await navigator.clipboard.writeText(txt)}catch(e){}
+});
+</script>
+</body>
+</html>
